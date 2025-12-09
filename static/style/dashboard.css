@@ -1,7 +1,3 @@
-/* ============================================
-   Foriella AMS - Dashboard Styles
-   ============================================ */
-
 * {
     font-family: 'Poppins', sans-serif;
 }
@@ -12,7 +8,6 @@ body {
     padding-top: 70px;
 }
 
-/* Top Navbar Styles */
 .top-navbar {
     background: linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%);
     padding: 0.75rem 2rem;
@@ -128,7 +123,6 @@ body {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.7%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
-/* Page Header */
 .page-header {
     background: linear-gradient(135deg, #eb7d24 0%, #d46a1a 100%);
     color: white;
@@ -142,12 +136,10 @@ body {
     font-size: 1.5rem;
 }
 
-/* Container */
 .container-main {
     padding: 0 2rem 2rem;
 }
 
-/* Stat Cards - Manager Dashboard */
 .stat-card {
     border-radius: 20px;
     padding: 1.75rem;
@@ -238,7 +230,6 @@ body {
     border-radius: 3px;
 }
 
-/* Card Color Variants */
 .stat-card.card-teal {
     background: linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%);
     box-shadow: 0 10px 30px rgba(20, 184, 166, 0.4);
@@ -274,7 +265,6 @@ body {
     box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
 }
 
-/* Icon variants for white background cards */
 .stat-card .icon.primary {
     background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
     color: white;
@@ -300,7 +290,6 @@ body {
     color: white;
 }
 
-/* Stat card animation on page load */
 @keyframes slideUp {
     from {
         opacity: 0;
@@ -321,7 +310,6 @@ body {
 .row .col-md-3:nth-child(3) .stat-card { animation-delay: 0.3s; }
 .row .col-md-3:nth-child(4) .stat-card { animation-delay: 0.4s; }
 
-/* Table Styles */
 .table-container {
     background: white;
     border-radius: 15px;
@@ -341,7 +329,6 @@ body {
     vertical-align: middle;
 }
 
-/* Card Styles */
 .card {
     border-radius: 15px;
     transition: transform 0.3s ease;
@@ -351,7 +338,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Button Styles */
 .btn-primary {
     background: linear-gradient(90deg, #eb7d24, #d46a1a);
     border: none;
@@ -381,7 +367,6 @@ body {
     border-radius: 10px;
 }
 
-/* Form Styles */
 .form-control, .form-select {
     border: 2px solid #eee;
     border-radius: 8px;
@@ -393,7 +378,6 @@ body {
     box-shadow: 0 0 0 3px rgba(235, 125, 36, 0.1);
 }
 
-/* Badge Styles */
 .badge.bg-success {
     background-color: #22c55e !important;
 }
@@ -411,13 +395,11 @@ body {
     background-color: #3b82f6 !important;
 }
 
-/* Alert Styles */
 .alert {
     border-radius: 10px;
     border: none;
 }
 
-/* Progress Bar */
 .progress {
     height: 8px;
     border-radius: 4px;
@@ -428,7 +410,6 @@ body {
     border-radius: 4px;
 }
 
-/* Empty State */
 .empty-state {
     text-align: center;
     padding: 3rem;
@@ -441,21 +422,15 @@ body {
     margin-bottom: 1rem;
 }
 
-/* Quick Actions */
 .quick-actions .btn {
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
 }
 
-/* ============================================
-   Tenant Dashboard Specific Styles
-   ============================================ */
-
 .tenant-dashboard {
     padding-top: 70px;
 }
 
-/* Old stat-card styles - only for non-tenant-stat cards */
 .tenant-dashboard .stat-card:not(.tenant-stat) {
     background: white;
     flex-direction: row;
@@ -500,7 +475,6 @@ body {
     margin: 0;
 }
 
-/* Alert Types */
 .alert-payment_reminder { 
     background-color: #fff3cd; 
     border-color: #ffc107; 
@@ -516,7 +490,6 @@ body {
     border-color: #0dcaf0; 
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .container-main {
         padding: 0 1rem 1rem;
@@ -534,10 +507,6 @@ body {
         font-size: 1.5rem;
     }
 }
-
-/* ============================================
-   Tenant Dashboard Stat Cards
-   ============================================ */
 
 .stat-card.tenant-stat {
     position: relative;
@@ -615,37 +584,31 @@ body {
     left: -60px;
 }
 
-/* Monthly Rent Card - Orange */
 .stat-card.tenant-stat.monthly-rent {
     background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%) !important;
     box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35);
 }
 
-/* Arrears Card - Red */
 .stat-card.tenant-stat.arrears {
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%) !important;
     box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
 }
 
-/* No Arrears Card - Green */
 .stat-card.tenant-stat.no-arrears {
     background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%) !important;
     box-shadow: 0 6px 20px rgba(34, 197, 94, 0.35);
 }
 
-/* Active Lease Card - Blue */
 .stat-card.tenant-stat.active-lease {
     background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%) !important;
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
 }
 
-/* Total Paid Card - Teal */
 .stat-card.tenant-stat.total-paid {
     background: linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%) !important;
     box-shadow: 0 6px 20px rgba(20, 184, 166, 0.35);
 }
 
-/* Responsive for tenant stats */
 @media (max-width: 992px) {
     .stat-card.tenant-stat {
         min-height: 100px;
@@ -663,11 +626,6 @@ body {
     }
 }
 
-/* ============================================
-   Tenant Dashboard - Unit & Lease Cards
-   ============================================ */
-
-/* My Unit Card */
 .unit-card {
     border-radius: 16px !important;
     overflow: hidden;
@@ -698,7 +656,6 @@ body {
     font-size: 0.8rem;
 }
 
-/* Lease Information Card */
 .lease-card {
     border-radius: 16px !important;
     overflow: hidden;
@@ -731,7 +688,6 @@ body {
     border-top: none;
 }
 
-/* Payment History Card */
 .payment-history-card {
     border-radius: 16px !important;
     overflow: hidden;
