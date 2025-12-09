@@ -1,0 +1,266 @@
+/* ============================================
+   Foriella AMS - Login Page Styles
+   ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #faf8f1 0%, #f5f0e6 100%);
+    padding: 2rem;
+}
+
+.auth {
+    background-color: white;
+    display: flex;
+    width: 900px;
+    min-height: 550px;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.left {
+    flex: 1;
+    background: linear-gradient(135deg, #eb7d24 0%, #d46a1a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.left::before {
+    content: '';
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    top: -100px;
+    left: -100px;
+}
+
+.left::after {
+    content: '';
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    bottom: -50px;
+    right: -50px;
+}
+
+.left-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: white;
+    align-items: center;
+    text-align: center;
+    z-index: 1;
+}
+
+.left-content .logo {
+    width: 100px;
+    height: 100px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+}
+
+.left-content .logo i {
+    font-size: 3rem;
+}
+
+.left-content h2 {
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.left-content p {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.left-content a {
+    background-color: transparent;
+    border: 2px solid white;
+    color: white;
+    padding: 12px 40px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.left-content a:hover {
+    background-color: white;
+    color: #eb7d24;
+    transform: translateY(-2px);
+}
+
+.features {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.feature i {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.right {
+    flex: 1;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.right h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.right .subtitle {
+    color: #888;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #555;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.input-group .input-wrapper {
+    position: relative;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    transition: color 0.3s;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 15px 15px 15px 45px;
+    border: 2px solid #eee;
+    background-color: rgb(223, 222, 222);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #eb7d24;
+    background-color: #fff;
+}
+
+.input-group input:focus + i {
+    color: #eb7d24;
+}
+
+.forgot-password {
+    text-align: right;
+    margin-bottom: 1.5rem;
+}
+
+.forgot-password a {
+    color: #eb7d24;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.forgot-password a:hover {
+    text-decoration: underline;
+}
+
+.right button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(90deg, rgb(49, 3, 3), #eb7d24);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.right button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(235, 125, 36, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .auth {
+        flex-direction: column;
+        width: 100%;
+        max-width: 450px;
+    }
+    
+    .left {
+        padding: 2rem;
+        min-height: 200px;
+    }
+    
+    .left-content h2 {
+        font-size: 1.5rem;
+    }
+    
+    .left-content p {
+        display: none;
+    }
+    
+    .features {
+        display: none;
+    }
+    
+    .right {
+        padding: 2rem;
+    }
+}

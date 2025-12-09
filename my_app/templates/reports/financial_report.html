@@ -1,0 +1,321 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Report | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="{% static 'style/main.css' %}" rel="stylesheet">
+    <link href="{% static 'style/dashboard.css' %}" rel="stylesheet">
+    <style>
+        .report-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        .report-card h5 {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+        .stat-box.revenue {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        }
+        .stat-box.monthly {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+        .stat-box.pending {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+        .stat-box.expected {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        }
+        .stat-box h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+        }
+        .stat-box p {
+            margin: 0;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        .payment-type-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .property-bar {
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #14b8a6 0%, #0d9488 100%);
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'manager_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manager_dashboard' %}">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'property_list' %}">
+                            <i class="bi bi-building"></i> Properties
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'unit_list' %}">
+                            <i class="bi bi-door-open"></i> Units
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tenant_list' %}">
+                            <i class="bi bi-people"></i> Tenants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'payment_list' %}">
+                            <i class="bi bi-credit-card"></i> Payments
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-graph-up"></i> Reports
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item active" href="{% url 'financial_report' %}"><i class="bi bi-graph-up-arrow me-2"></i>Financial Report</a></li>
+                            <li><a class="dropdown-item" href="{% url 'occupancy_report' %}"><i class="bi bi-pie-chart me-2"></i>Occupancy Report</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav ms-3">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="mb-1"><i class="bi bi-graph-up-arrow text-primary"></i> Financial Report</h2>
+                <p class="text-muted mb-0">Overview of revenue, payments, and financial performance</p>
+            </div>
+            <div>
+                <span class="badge bg-primary fs-6">{{ current_year }}</span>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-box revenue">
+                    <i class="bi bi-cash-stack text-success fs-3"></i>
+                    <h3 class="text-success">KES {{ total_revenue|floatformat:0|default:"0" }}</h3>
+                    <p>Total Revenue</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box monthly">
+                    <i class="bi bi-calendar-month text-primary fs-3"></i>
+                    <h3 class="text-primary">KES {{ monthly_revenue|floatformat:0|default:"0" }}</h3>
+                    <p>This Month</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box pending">
+                    <i class="bi bi-hourglass-split text-warning fs-3"></i>
+                    <h3 class="text-warning">KES {{ pending_payments|floatformat:0|default:"0" }}</h3>
+                    <p>Pending Payments</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-box expected">
+                    <i class="bi bi-wallet2 text-info fs-3"></i>
+                    <h3 class="text-info">KES {{ total_expected_rent|floatformat:0|default:"0" }}</h3>
+                    <p>Expected Monthly Rent</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="report-card">
+                    <h5><i class="bi bi-bar-chart me-2"></i>Monthly Revenue ({{ current_year }})</h5>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="report-card">
+                    <h5><i class="bi bi-pie-chart me-2"></i>Payment Types</h5>
+                    <div class="chart-container">
+                        <canvas id="paymentTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="report-card">
+                    <h5><i class="bi bi-building me-2"></i>Revenue by Property</h5>
+                    {% for prop in property_revenue %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>{{ prop.tenant__unit__property__name|default:"Unknown" }}</span>
+                            <strong>KES {{ prop.total|floatformat:0 }}</strong>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {% widthratio prop.total total_revenue 100 %}%"></div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No payment data available</p>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="report-card">
+                    <h5><i class="bi bi-clock-history me-2"></i>Recent Payments</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Tenant</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in recent_payments %}
+                                <tr>
+                                    <td>{{ payment.tenant.first_name }} {{ payment.tenant.last_name }}</td>
+                                    <td>
+                                        <span class="badge {% if payment.payment_type == 'rent' %}bg-primary{% elif payment.payment_type == 'deposit' %}bg-info{% else %}bg-secondary{% endif %}">
+                                            {{ payment.get_payment_type_display }}
+                                        </span>
+                                    </td>
+                                    <td>KES {{ payment.amount|floatformat:0 }}</td>
+                                    <td>{{ payment.payment_date|date:"M d" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No payments yet</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Monthly Revenue Chart
+        const monthlyData = {{ monthly_data|safe }};
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthlyValues = new Array(12).fill(0);
+        
+        monthlyData.forEach(item => {
+            const date = new Date(item.month);
+            monthlyValues[date.getMonth()] = item.total;
+        });
+
+        new Chart(document.getElementById('monthlyChart'), {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Revenue (KES)',
+                    data: monthlyValues,
+                    backgroundColor: 'rgba(20, 184, 166, 0.7)',
+                    borderColor: 'rgba(20, 184, 166, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Payment Type Chart
+        const paymentTypes = {{ payment_by_type|safe }};
+        const typeLabels = paymentTypes.map(p => p.payment_type.charAt(0).toUpperCase() + p.payment_type.slice(1));
+        const typeValues = paymentTypes.map(p => p.total);
+        const typeColors = ['#14b8a6', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
+
+        new Chart(document.getElementById('paymentTypeChart'), {
+            type: 'doughnut',
+            data: {
+                labels: typeLabels,
+                datasets: [{
+                    data: typeValues,
+                    backgroundColor: typeColors.slice(0, typeLabels.length),
+                    borderWidth: 0,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

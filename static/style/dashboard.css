@@ -1,0 +1,750 @@
+/* ============================================
+   Foriella AMS - Dashboard Styles
+   ============================================ */
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    padding-top: 70px;
+}
+
+/* Top Navbar Styles */
+.top-navbar {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%);
+    padding: 0.75rem 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(20, 184, 166, 0.3);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.navbar-brand .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #eb7d24 0%, #d46a1a 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 8px rgba(235, 125, 36, 0.3);
+}
+
+.navbar-brand h4 {
+    color: white;
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.navbar-brand span {
+    color: #eb7d24;
+}
+
+.top-navbar .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.top-navbar .navbar-nav .nav-link:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+}
+
+.top-navbar .navbar-nav .nav-link.active {
+    color: #fbbf24;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.top-navbar .navbar-nav .nav-link i {
+    margin-right: 0.3rem;
+}
+
+.top-navbar .dropdown-menu {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+    border: none;
+    border-radius: 12px;
+    margin-top: 0.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    padding: 0.5rem;
+}
+
+.top-navbar .dropdown-item {
+    color: rgba(255, 255, 255, 0.9);
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    margin: 2px 0;
+}
+
+.top-navbar .dropdown-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.user-dropdown {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, #eb7d24 0%, #d46a1a 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.navbar-toggler {
+    border-color: rgba(255,255,255,0.2);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.7%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, #eb7d24 0%, #d46a1a 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+/* Container */
+.container-main {
+    padding: 0 2rem 2rem;
+}
+
+/* Stat Cards - Manager Dashboard */
+.stat-card {
+    border-radius: 20px;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    color: white;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+    transition: all 0.4s ease;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: -30px;
+    left: -30px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+}
+
+.stat-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+}
+
+.stat-card:hover::before {
+    transform: rotate(45deg);
+}
+
+.stat-card .icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    color: white;
+    margin-bottom: 0.5rem;
+}
+
+.stat-card h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-card p {
+    margin: 0;
+    color: rgba(255,255,255,0.9);
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+.stat-card small {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.8rem;
+}
+
+.stat-card .progress {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.3);
+    overflow: hidden;
+}
+
+.stat-card .progress-bar {
+    background: white;
+    border-radius: 3px;
+}
+
+/* Card Color Variants */
+.stat-card.card-teal {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%);
+    box-shadow: 0 10px 30px rgba(20, 184, 166, 0.4);
+}
+
+.stat-card.card-orange {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%);
+    box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4);
+}
+
+.stat-card.card-rose {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 50%, #be123c 100%);
+    box-shadow: 0 10px 30px rgba(244, 63, 94, 0.4);
+}
+
+.stat-card.card-violet {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+}
+
+.stat-card.card-blue {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+}
+
+.stat-card.card-green {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%);
+    box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+}
+
+.stat-card.card-amber {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4);
+}
+
+/* Icon variants for white background cards */
+.stat-card .icon.primary {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+    color: white;
+}
+
+.stat-card .icon.success {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+}
+
+.stat-card .icon.warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.stat-card .icon.danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.stat-card .icon.info {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+/* Stat card animation on page load */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-card {
+    animation: slideUp 0.5s ease forwards;
+}
+
+.row .col-md-3:nth-child(1) .stat-card { animation-delay: 0.1s; }
+.row .col-md-3:nth-child(2) .stat-card { animation-delay: 0.2s; }
+.row .col-md-3:nth-child(3) .stat-card { animation-delay: 0.3s; }
+.row .col-md-3:nth-child(4) .stat-card { animation-delay: 0.4s; }
+
+/* Table Styles */
+.table-container {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.table th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #666;
+    border-top: none;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Card Styles */
+.card {
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+/* Button Styles */
+.btn-primary {
+    background: linear-gradient(90deg, #eb7d24, #d46a1a);
+    border: none;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(235, 125, 36, 0.4);
+    background: linear-gradient(90deg, #d46a1a, #c25a0a);
+}
+
+.btn-outline-primary {
+    border-color: #eb7d24;
+    color: #eb7d24;
+    border-radius: 10px;
+}
+
+.btn-outline-primary:hover {
+    background-color: #eb7d24;
+    border-color: #eb7d24;
+    color: white;
+}
+
+.btn-outline-secondary {
+    border-radius: 10px;
+}
+
+/* Form Styles */
+.form-control, .form-select {
+    border: 2px solid #eee;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #eb7d24;
+    box-shadow: 0 0 0 3px rgba(235, 125, 36, 0.1);
+}
+
+/* Badge Styles */
+.badge.bg-success {
+    background-color: #22c55e !important;
+}
+
+.badge.bg-warning {
+    background-color: #f59e0b !important;
+    color: #333;
+}
+
+.badge.bg-danger {
+    background-color: #ef4444 !important;
+}
+
+.badge.bg-info {
+    background-color: #3b82f6 !important;
+}
+
+/* Alert Styles */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* Progress Bar */
+.progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    border-radius: 4px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+/* Quick Actions */
+.quick-actions .btn {
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   Tenant Dashboard Specific Styles
+   ============================================ */
+
+.tenant-dashboard {
+    padding-top: 70px;
+}
+
+/* Old stat-card styles - only for non-tenant-stat cards */
+.tenant-dashboard .stat-card:not(.tenant-stat) {
+    background: white;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.tenant-dashboard .stat-card:not(.tenant-stat) .icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.tenant-dashboard .stat-card:not(.tenant-stat) .icon.success {
+    background: #d1fae5;
+    color: #059669;
+}
+
+.tenant-dashboard .stat-card:not(.tenant-stat) .icon.danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.tenant-dashboard .stat-card:not(.tenant-stat) .icon.primary {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.tenant-dashboard .stat-card:not(.tenant-stat) h3 {
+    color: #333;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.tenant-dashboard .stat-card:not(.tenant-stat) p {
+    color: #888;
+    margin: 0;
+}
+
+/* Alert Types */
+.alert-payment_reminder { 
+    background-color: #fff3cd; 
+    border-color: #ffc107; 
+}
+
+.alert-payment_received { 
+    background-color: #d1e7dd; 
+    border-color: #198754; 
+}
+
+.alert-lease_expiry { 
+    background-color: #cff4fc; 
+    border-color: #0dcaf0; 
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container-main {
+        padding: 0 1rem 1rem;
+    }
+    
+    .page-header {
+        padding: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-card h3 {
+        font-size: 1.5rem;
+    }
+}
+
+/* ============================================
+   Tenant Dashboard Stat Cards
+   ============================================ */
+
+.stat-card.tenant-stat {
+    position: relative;
+    display: flex;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 16px;
+    color: white !important;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    min-height: 120px;
+    background: #333;
+}
+
+.stat-card.tenant-stat:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card.tenant-stat .stat-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white !important;
+    backdrop-filter: blur(10px);
+    flex-shrink: 0;
+}
+
+.stat-card.tenant-stat .stat-content {
+    flex: 1;
+    z-index: 1;
+}
+
+.stat-card.tenant-stat .stat-content h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    color: white !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.stat-card.tenant-stat .stat-content p {
+    margin: 0;
+    opacity: 0.95;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: white !important;
+}
+
+.stat-card.tenant-stat .stat-decoration {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    top: -40px;
+    right: -40px;
+}
+
+.stat-card.tenant-stat .stat-decoration::after {
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    bottom: -60px;
+    left: -60px;
+}
+
+/* Monthly Rent Card - Orange */
+.stat-card.tenant-stat.monthly-rent {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 50%, #c2410c 100%) !important;
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35);
+}
+
+/* Arrears Card - Red */
+.stat-card.tenant-stat.arrears {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #b91c1c 100%) !important;
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35);
+}
+
+/* No Arrears Card - Green */
+.stat-card.tenant-stat.no-arrears {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 50%, #15803d 100%) !important;
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.35);
+}
+
+/* Active Lease Card - Blue */
+.stat-card.tenant-stat.active-lease {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%) !important;
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+}
+
+/* Total Paid Card - Teal */
+.stat-card.tenant-stat.total-paid {
+    background: linear-gradient(135deg, #14b8a6 0%, #0d9488 50%, #0f766e 100%) !important;
+    box-shadow: 0 6px 20px rgba(20, 184, 166, 0.35);
+}
+
+/* Responsive for tenant stats */
+@media (max-width: 992px) {
+    .stat-card.tenant-stat {
+        min-height: 100px;
+        padding: 1rem;
+    }
+    
+    .stat-card.tenant-stat .stat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .stat-card.tenant-stat .stat-content h3 {
+        font-size: 1.25rem;
+    }
+}
+
+/* ============================================
+   Tenant Dashboard - Unit & Lease Cards
+   ============================================ */
+
+/* My Unit Card */
+.unit-card {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+.unit-card-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    color: white;
+    padding: 1rem 1.25rem;
+    border: none;
+}
+
+.unit-card-header h6 {
+    color: white;
+    font-weight: 600;
+}
+
+.unit-info-box {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border: 1px solid #bae6fd;
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.unit-info-box .status-badge {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+}
+
+/* Lease Information Card */
+.lease-card {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+.lease-card-header {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%);
+    color: white;
+    padding: 1rem 1.25rem;
+    border: none;
+}
+
+.lease-card-header h6 {
+    color: white;
+    font-weight: 600;
+}
+
+.lease-info-list .list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 0.85rem 0;
+    transition: background 0.2s ease;
+}
+
+.lease-info-list .list-group-item:hover {
+    background: #f8f9fa;
+}
+
+.lease-info-list .list-group-item:first-child {
+    border-top: none;
+}
+
+/* Payment History Card */
+.payment-history-card {
+    border-radius: 16px !important;
+    overflow: hidden;
+}
+
+.payment-history-header {
+    background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+    color: white;
+    padding: 1rem 1.25rem;
+    border: none;
+}
+
+.payment-history-header h6 {
+    color: white;
+    font-weight: 600;
+}

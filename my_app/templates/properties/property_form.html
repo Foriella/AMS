@@ -1,0 +1,125 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if is_edit %}Edit{% else %}Add{% endif %} Property | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'style/main.css' %}" rel="stylesheet">
+</head>
+<body>
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'manager_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'property_list' %}">
+                        <i class="bi bi-arrow-left"></i> Back to Properties
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1><i class="bi bi-building me-2"></i>{% if is_edit %}Edit{% else %}Add New{% endif %} Property</h1>
+        </div>
+    </div>
+
+    <div class="container-main">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-container">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Property Name *</label>
+                                <input type="text" name="name" class="form-control" value="{{ form.name.value|default:'' }}" required>
+                                {% if form.name.errors %}
+                                <div class="text-danger small">{{ form.name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Property Type *</label>
+                                <select name="property_type" class="form-select" required>
+                                    <option value="">Select Type</option>
+                                    <option value="apartment" {% if form.property_type.value == 'apartment' %}selected{% endif %}>Apartment Building</option>
+                                    <option value="house" {% if form.property_type.value == 'house' %}selected{% endif %}>House</option>
+                                    <option value="commercial" {% if form.property_type.value == 'commercial' %}selected{% endif %}>Commercial Building</option>
+                                    <option value="mixed" {% if form.property_type.value == 'mixed' %}selected{% endif %}>Mixed Use</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Address *</label>
+                            <textarea name="address" class="form-control" rows="2" required>{{ form.address.value|default:'' }}</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">City *</label>
+                                <input type="text" name="city" class="form-control" value="{{ form.city.value|default:'' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">County</label>
+                                <input type="text" name="county" class="form-control" value="{{ form.county.value|default:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Total Units *</label>
+                                <input type="number" name="total_units" class="form-control" value="{{ form.total_units.value|default:'0' }}" min="0" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Status *</label>
+                                <select name="status" class="form-select" required>
+                                    <option value="active" {% if form.status.value == 'active' %}selected{% endif %}>Active</option>
+                                    <option value="inactive" {% if form.status.value == 'inactive' %}selected{% endif %}>Inactive</option>
+                                    <option value="maintenance" {% if form.status.value == 'maintenance' %}selected{% endif %}>Under Maintenance</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3">{{ form.description.value|default:'' }}</textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg"></i> {% if is_edit %}Update{% else %}Create{% endif %} Property
+                            </button>
+                            <a href="{% url 'property_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

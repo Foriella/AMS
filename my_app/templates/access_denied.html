@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied | Foriella AMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #faf8f1 0%, #f5f0e6 100%);
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .icon i {
+            font-size: 3rem;
+            color: white;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .info-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .info-box h4 {
+            color: #856404;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-box ul {
+            color: #856404;
+            font-size: 0.85rem;
+            margin-left: 1.2rem;
+        }
+
+        .info-box li {
+            margin-bottom: 0.3rem;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #eb7d24 0%, #d46a1a 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(235, 125, 36, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .user-info {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        .user-info strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">
+            <i class="fa-solid fa-lock"></i>
+        </div>
+        <h1>Access Denied</h1>
+        <p>Sorry, you don't have permission to access this page. This area is restricted to authorized staff members only.</p>
+        
+        <div class="info-box">
+            <h4><i class="fa-solid fa-circle-info"></i> What can you do?</h4>
+            <ul>
+                <li>If you're a <strong>tenant</strong>, please contact your property manager to link your account</li>
+                <li>If you should have <strong>staff access</strong>, please contact the administrator</li>
+                <li>If you logged in with the <strong>wrong account</strong>, please log out and try again</li>
+            </ul>
+        </div>
+
+        <div class="buttons">
+            <a href="{% url 'login' %}" class="btn btn-primary">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Back to Login
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-right-from-bracket"></i> Log Out
+            </a>
+        </div>
+
+        {% if user.is_authenticated %}
+        <div class="user-info">
+            Logged in as: <strong>{{ user.username }}</strong>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

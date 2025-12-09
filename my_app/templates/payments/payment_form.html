@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if is_edit %}Edit{% else %}Record{% endif %} Payment | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'style/main.css' %}" rel="stylesheet">
+</head>
+<body>
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'manager_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'payment_list' %}">
+                        <i class="bi bi-arrow-left"></i> Back to Payments
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1><i class="bi bi-cash-stack me-2"></i>{% if is_edit %}Edit{% else %}Record{% endif %} Payment</h1>
+        </div>
+    </div>
+
+    <div class="container-main">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-container">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Tenant *</label>
+                                <select name="tenant" class="form-select" required>
+                                    <option value="">Select Tenant</option>
+                                    {% for tenant in form.tenant.field.queryset %}
+                                    <option value="{{ tenant.pk }}" {% if form.tenant.value == tenant.pk %}selected{% endif %}>{{ tenant.full_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Amount (KES) *</label>
+                                <input type="number" name="amount" class="form-control" value="{{ form.amount.value|default:'' }}" step="0.01" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Payment Type *</label>
+                                <select name="payment_type" class="form-select" required>
+                                    <option value="rent" {% if form.payment_type.value == 'rent' %}selected{% endif %}>Rent</option>
+                                    <option value="deposit" {% if form.payment_type.value == 'deposit' %}selected{% endif %}>Deposit</option>
+                                    <option value="utility" {% if form.payment_type.value == 'utility' %}selected{% endif %}>Utility</option>
+                                    <option value="penalty" {% if form.payment_type.value == 'penalty' %}selected{% endif %}>Penalty</option>
+                                    <option value="other" {% if form.payment_type.value == 'other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Payment Method *</label>
+                                <select name="payment_method" class="form-select" required>
+                                    <option value="mpesa" {% if form.payment_method.value == 'mpesa' %}selected{% endif %}>M-Pesa</option>
+                                    <option value="cash" {% if form.payment_method.value == 'cash' %}selected{% endif %}>Cash</option>
+                                    <option value="bank" {% if form.payment_method.value == 'bank' %}selected{% endif %}>Bank Transfer</option>
+                                    <option value="cheque" {% if form.payment_method.value == 'cheque' %}selected{% endif %}>Cheque</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Payment Date *</label>
+                                <input type="date" name="payment_date" class="form-control" value="{{ form.payment_date.value|default:'' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Reference Number</label>
+                                <input type="text" name="reference_number" class="form-control" value="{{ form.reference_number.value|default:'' }}" placeholder="e.g., M-Pesa code">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Status *</label>
+                            <select name="status" class="form-select" required>
+                                <option value="completed" {% if form.status.value == 'completed' %}selected{% endif %}>Completed</option>
+                                <option value="pending" {% if form.status.value == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="failed" {% if form.status.value == 'failed' %}selected{% endif %}>Failed</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3" placeholder="Additional notes about this payment">{{ form.description.value|default:'' }}</textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg"></i> {% if is_edit %}Update{% else %}Record{% endif %} Payment
+                            </button>
+                            <a href="{% url 'payment_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

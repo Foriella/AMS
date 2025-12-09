@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ property.name }} | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'style/main.css' %}" rel="stylesheet">
+</head>
+<body>
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'manager_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'property_list' %}">
+                        <i class="bi bi-arrow-left"></i> Back to Properties
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1><i class="bi bi-building me-2"></i>{{ property.name }}</h1>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'property_update' property.pk %}" class="btn btn-warning">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <a href="{% url 'property_delete' property.pk %}" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-main">
+        <div class="row">
+            <div class="col-md-8 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Property Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Property Name</label>
+                                <p class="mb-0 fw-bold">{{ property.name }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Property Type</label>
+                                <p class="mb-0">{{ property.get_property_type_display }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Address</label>
+                                <p class="mb-0">{{ property.address }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">City</label>
+                                <p class="mb-0">{{ property.city }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">County</label>
+                                <p class="mb-0">{{ property.county|default:"--" }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Status</label>
+                                <p class="mb-0">
+                                    <span class="badge bg-{% if property.status == 'active' %}success{% elif property.status == 'inactive' %}secondary{% else %}warning{% endif %}">
+                                        {{ property.get_status_display }}
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Manager</label>
+                                <p class="mb-0">
+                                    {% if property.manager %}
+                                        {{ property.manager.get_full_name|default:property.manager.username }}
+                                    {% else %}
+                                        Not Assigned
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small">Total Units</label>
+                                <p class="mb-0">{{ property.total_units }}</p>
+                            </div>
+                            {% if property.description %}
+                            <div class="col-12 mb-3">
+                                <label class="text-muted small">Description</label>
+                                <p class="mb-0">{{ property.description }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0"><i class="bi bi-bar-chart me-2"></i>Occupancy Stats</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span>Total Units</span>
+                            <strong class="text-primary fs-5">{{ property.total_units }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span>Occupied</span>
+                            <strong class="text-success fs-5">{{ property.occupied_units }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span>Vacant</span>
+                            <strong class="text-warning fs-5">{{ property.vacant_units }}</strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Occupancy Rate</span>
+                            <strong class="fs-5">
+                                {% widthratio property.occupied_units property.total_units 100 as occupancy %}
+                                {% if property.total_units > 0 %}
+                                    {{ occupancy|default:0 }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-info text-white">
+                        <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i>Timeline</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-muted small">Created</span>
+                            <span>{{ property.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted small">Last Updated</span>
+                            <span>{{ property.updated_at|date:"M d, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="bi bi-door-open me-2 text-primary"></i>Units in this Property</h6>
+                        <a href="{% url 'unit_create' %}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-plus"></i> Add Unit
+                        </a>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Unit Number</th>
+                                    <th>Type</th>
+                                    <th>Bedrooms</th>
+                                    <th>Rent (KES)</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for unit in property.units.all %}
+                                <tr>
+                                    <td><strong>{{ unit.unit_number }}</strong></td>
+                                    <td>{{ unit.get_unit_type_display }}</td>
+                                    <td>{{ unit.bedrooms }}</td>
+                                    <td>{{ unit.rent_amount|floatformat:0 }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if unit.status == 'available' %}success{% elif unit.status == 'occupied' %}primary{% else %}warning{% endif %}">
+                                            {{ unit.get_status_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{% url 'unit_detail' unit.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'unit_update' unit.pk %}" class="btn btn-sm btn-outline-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="bi bi-door-closed" style="font-size: 2rem;"></i>
+                                        <p class="mt-2 mb-0">No units added to this property yet.</p>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

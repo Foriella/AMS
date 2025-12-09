@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenants | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'style/main.css' %}" rel="stylesheet">
+</head>
+<body>
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'manager_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-building"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manager_dashboard' %}">
+                            <i class="bi bi-grid-1x2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'property_list' %}">
+                            <i class="bi bi-buildings"></i> Properties
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'unit_list' %}">
+                            <i class="bi bi-door-open"></i> Units
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'tenant_list' %}">
+                            <i class="bi bi-people"></i> Tenants
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-cash-stack"></i> Finance
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'payment_list' %}"><i class="bi bi-credit-card me-2"></i>Payments</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link user-dropdown dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <div class="user-avatar">
+                                {% if user.is_authenticated %}
+                                    {{ user.username|slice:":2"|upper }}
+                                {% else %}
+                                    JD
+                                {% endif %}
+                            </div>
+                            <span class="d-none d-lg-inline">
+                                {% if user.is_authenticated %}
+                                    {{ user.get_full_name|default:user.username }}
+                                {% else %}
+                                    Guest
+                                {% endif %}
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-left me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1><i class="bi bi-people me-2"></i>Tenants Management</h1>
+        </div>
+    </div>
+    
+    <div class="container-main">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="stat-card card-teal">
+                    <div class="icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <h3>{{ total_tenants }}</h3>
+                    <p>Total Tenants</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card card-orange">
+                    <div class="icon">
+                        <i class="bi bi-person-check"></i>
+                    </div>
+                    <h3>{{ active_tenants }}</h3>
+                    <p>Active Tenants</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card card-rose">
+                    <div class="icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <h3>{{ tenants_with_overdue|default:0 }}</h3>
+                    <p>With Overdue Payments</p>
+                </div>
+            </div>
+        </div>
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body">
+                <form method="get" class="row align-items-center">
+                    <div class="col-md-4 mb-2 mb-md-0">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                            <input type="text" name="search" class="form-control border-start-0" placeholder="Search tenants..." value="{{ search_query }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-2 mb-md-0">
+                        <select name="property" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Properties</option>
+                            {% for prop in properties %}
+                                <option value="{{ prop.id }}" {% if property_filter == prop.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ prop.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2 mb-md-0">
+                        <select name="status" class="form-select" onchange="this.form.submit()">
+                            <option value="">All Status</option>
+                            <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                            <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 text-md-end">
+                        <a href="{% url 'tenant_create' %}" class="btn btn-add">
+                            <i class="bi bi-person-plus me-1"></i> Add Tenant
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="table-container">
+            {% if tenants %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tenant</th>
+                                <th>Contact</th>
+                                <th>Property</th>
+                                <th>Unit</th>
+                                <th>Rent (KES)</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for tenant in tenants %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="tenant-avatar" style="background: linear-gradient(135deg, #14b8a6, #0d9488);">
+                                            {{ tenant.first_name|slice:":1"|upper }}{{ tenant.last_name|slice:":1"|upper }}
+                                        </div>
+                                        <div>
+                                            <strong>{{ tenant.first_name }} {{ tenant.last_name }}</strong>
+                                            <br><small class="text-muted">Since {{ tenant.lease_start_date|date:"M Y" }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <small>{{ tenant.phone }}</small><br>
+                                    <small class="text-muted">{{ tenant.email }}</small>
+                                </td>
+                                <td>
+                                    {% if tenant.unit %}
+                                        <span class="property-badge">{{ tenant.unit.property.name }}</span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if tenant.unit %}
+                                        <strong>{{ tenant.unit.unit_number }}</strong>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if tenant.unit %}
+                                        {{ tenant.unit.rent_amount|floatformat:0 }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if tenant.status == 'active' %}
+                                        <span class="badge bg-active">Active</span>
+                                    {% elif tenant.status == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'tenant_detail' tenant.pk %}" class="btn btn-sm btn-outline-primary me-1">View</a>
+                                    <a href="{% url 'tenant_update' tenant.pk %}" class="btn btn-sm btn-outline-secondary me-1">Edit</a>
+                                    <a href="{% url 'tenant_delete' tenant.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-people"></i>
+                    <h5>No Tenants Found</h5>
+                    <p class="text-muted">
+                        {% if search_query or property_filter or status_filter %}
+                            No tenants match your filter criteria. Try adjusting your filters.
+                        {% else %}
+                            Get started by adding your first tenant.
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'tenant_create' %}" class="btn btn-primary">
+                        <i class="bi bi-person-plus"></i> Add Tenant
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

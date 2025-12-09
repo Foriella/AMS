@@ -1,0 +1,290 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if is_edit %}Edit{% else %}Add{% endif %} Tenant | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'style/main.css' %}" rel="stylesheet">
+    <style>
+        /* Remove spinner arrows from number inputs */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'manager_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'tenant_list' %}">
+                        <i class="bi bi-arrow-left"></i> Back to Tenants
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1><i class="bi bi-person-plus me-2"></i>{% if is_edit %}Edit{% else %}Add New{% endif %} Tenant</h1>
+        </div>
+    </div>
+
+    <div class="container-main">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="form-container">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>Please fix the following errors:</strong>
+                        <ul class="mb-0 mt-2">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        
+                        <h6 class="text-muted mb-3"><i class="bi bi-person"></i> Personal Information</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">First Name *</label>
+                                <input type="text" name="first_name" class="form-control" value="{{ form.first_name.value|default:'' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Last Name *</label>
+                                <input type="text" name="last_name" class="form-control" value="{{ form.last_name.value|default:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email *</label>
+                                <input type="email" name="email" class="form-control" value="{{ form.email.value|default:'' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone *</label>
+                                <input type="text" name="phone" class="form-control" value="{{ form.phone.value|default:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">ID Number</label>
+                            <input type="text" name="id_number" class="form-control" value="{{ form.id_number.value|default:'' }}">
+                        </div>
+
+                        <hr class="my-4">
+                        <h6 class="text-muted mb-3"><i class="bi bi-person-badge"></i> User Account (for Login)</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Link to User Account</label>
+                                <select name="user" id="userSelect" class="form-select" onchange="toggleNewAccountFields()">
+                                    <option value="">-- No Account Linked --</option>
+                                    <option value="create_new" {% if create_new_account %}selected{% endif %}>Create New Account</option>
+                                    {% for user_option in form.user.field.queryset %}
+                                    <option value="{{ user_option.pk }}" {% if form.user.value|stringformat:"i" == user_option.pk|stringformat:"i" %}selected{% endif %}>
+                                        {{ user_option.username }} {% if user_option.first_name %}({{ user_option.first_name }} {{ user_option.last_name }}){% endif %}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">
+                                    <i class="bi bi-info-circle"></i> Linking a user account allows this tenant to log in and view their dashboard.
+                                </small>
+                            </div>
+                        </div>
+                        <div id="newAccountFields" class="new-account-section" style="display: none;">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle"></i> <strong>Create Login Account</strong><br>
+                                A username and password will be created so this tenant can log in to their dashboard.
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Username *</label>
+                                    <input type="text" name="new_username" id="newUsername" class="form-control" 
+                                           placeholder="e.g., john.doe" value="{{ new_username|default:'' }}">
+                                    <small class="text-muted">This will be used to log in</small>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Password *</label>
+                                    <input type="password" name="new_password" id="newPassword" class="form-control" 
+                                           placeholder="Enter a secure password">
+                                    <small class="text-muted">Minimum 8 characters</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Confirm Password *</label>
+                                    <input type="password" name="confirm_password" id="confirmPassword" class="form-control" 
+                                           placeholder="Confirm password">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check mt-4">
+                                        <input type="checkbox" name="send_credentials" id="sendCredentials" class="form-check-input" checked>
+                                        <label class="form-check-label" for="sendCredentials">
+                                            <small>Show login credentials after creation</small>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h6 class="text-muted mb-3"><i class="bi bi-house-door"></i> Unit Assignment</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Assign Unit</label>
+                                <select name="unit" class="form-select">
+                                    <option value="">No Unit Assigned</option>
+                                    {% for unit in form.unit.field.queryset %}
+                                    <option value="{{ unit.pk }}" {% if form.unit.value == unit.pk %}selected{% endif %}>{{ unit }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Status *</label>
+                                <select name="status" class="form-select" required>
+                                    <option value="active" {% if form.status.value == 'active' %}selected{% endif %}>Active</option>
+                                    <option value="pending" {% if form.status.value == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="inactive" {% if form.status.value == 'inactive' %}selected{% endif %}>Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h6 class="text-muted mb-3"><i class="bi bi-file-text"></i> Lease Information</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Lease Start Date</label>
+                                <input type="date" name="lease_start_date" class="form-control" value="{{ form.lease_start_date.value|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Lease End Date</label>
+                                <input type="date" name="lease_end_date" class="form-control" value="{{ form.lease_end_date.value|default:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Monthly Rent (KES)</label>
+                                <input type="number" name="rent_amount" class="form-control" value="{{ form.rent_amount.value|default:'' }}" step="0.01">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Deposit Paid (KES)</label>
+                                <input type="number" name="deposit_paid" class="form-control" value="{{ form.deposit_paid.value|default:'' }}" step="0.01">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+                        <h6 class="text-muted mb-3"><i class="bi bi-telephone"></i> Emergency Contact</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Emergency Contact Name</label>
+                                <input type="text" name="emergency_contact_name" class="form-control" value="{{ form.emergency_contact_name.value|default:'' }}">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Emergency Contact Phone</label>
+                                <input type="text" name="emergency_contact_phone" class="form-control" value="{{ form.emergency_contact_phone.value|default:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea name="notes" class="form-control" rows="3">{{ form.notes.value|default:'' }}</textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg"></i> {% if is_edit %}Update{% else %}Create{% endif %} Tenant
+                            </button>
+                            <a href="{% url 'tenant_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function toggleNewAccountFields() {
+            const userSelect = document.getElementById('userSelect');
+            const newAccountFields = document.getElementById('newAccountFields');
+            const newUsername = document.getElementById('newUsername');
+            const newPassword = document.getElementById('newPassword');
+            const confirmPassword = document.getElementById('confirmPassword');
+            
+            if (userSelect.value === 'create_new') {
+                newAccountFields.style.display = 'block';
+                newUsername.required = true;
+                newPassword.required = true;
+                confirmPassword.required = true;
+            } else {
+                newAccountFields.style.display = 'none';
+                newUsername.required = false;
+                newPassword.required = false;
+                confirmPassword.required = false;
+            }
+        }
+        
+        // Run on page load to handle form resubmission with errors
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleNewAccountFields();
+            
+            // Auto-generate username from email
+            const emailInput = document.querySelector('input[name="email"]');
+            const usernameInput = document.getElementById('newUsername');
+            
+            if (emailInput && usernameInput) {
+                emailInput.addEventListener('blur', function() {
+                    if (document.getElementById('userSelect').value === 'create_new' && !usernameInput.value) {
+                        // Generate username from email (part before @)
+                        const email = emailInput.value;
+                        if (email) {
+                            usernameInput.value = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

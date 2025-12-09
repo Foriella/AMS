@@ -1,0 +1,225 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Units | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'style/main.css' %}" rel="stylesheet">
+</head>
+<body>
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'manager_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manager_dashboard' %}">
+                            <i class="bi bi-grid-1x2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'property_list' %}">
+                            <i class="bi bi-buildings"></i> Properties
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'unit_list' %}">
+                            <i class="bi bi-door-open"></i> Units
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tenant_list' %}">
+                            <i class="bi bi-people"></i> Tenants
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-cash-stack"></i> Finance
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'payment_list' %}"><i class="bi bi-cash-stack me-2"></i>Payments</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link user-dropdown dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <div class="user-avatar">
+                                {% if user.is_authenticated %}
+                                    {{ user.username|slice:":2"|upper }}
+                                {% else %}
+                                    JD
+                                {% endif %}
+                            </div>
+                            <span class="d-none d-lg-inline">
+                                {% if user.is_authenticated %}
+                                    {{ user.get_full_name|default:user.username }}
+                                {% else %}
+                                    Guest
+                                {% endif %}
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-left me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1><i class="bi bi-door-open me-2"></i>Units</h1>
+        </div>
+    </div>
+    
+    <div class="container-main">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="stat-card card-teal">
+                    <i class="bi bi-door-open" style="font-size: 1.5rem;"></i>
+                    <h3>{{ total_units }}</h3>
+                    <p>Total Units</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card card-green">
+                    <i class="bi bi-check-circle" style="font-size: 1.5rem;"></i>
+                    <h3>{{ occupied_units }}</h3>
+                    <p>Occupied Units</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card card-yellow">
+                    <i class="bi bi-house" style="font-size: 1.5rem;"></i>
+                    <h3>{{ available_units }}</h3>
+                    <p>Available Units</p>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <form method="get" class="d-flex align-items-center flex-wrap gap-2">
+                <div class="btn-group me-2">
+                    <a href="{% url 'unit_list' %}" class="btn btn-outline-secondary {% if not status_filter %}active{% endif %}">All</a>
+                    <a href="?status=occupied" class="btn btn-outline-secondary {% if status_filter == 'occupied' %}active{% endif %}">Occupied</a>
+                    <a href="?status=available" class="btn btn-outline-secondary {% if status_filter == 'available' %}active{% endif %}">Available</a>
+                </div>
+                <select name="property" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+                    <option value="">All Properties</option>
+                    {% for prop in properties %}
+                        <option value="{{ prop.id }}" {% if property_filter == prop.id|stringformat:"s" %}selected{% endif %}>
+                            {{ prop.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+            
+            <a href="{% url 'unit_create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add Unit
+            </a>
+        </div>
+        <div class="table-container">
+            {% if units %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Unit</th>
+                            <th>Property</th>
+                            <th>Type</th>
+                            <th>Floor</th>
+                            <th>Rent (KES)</th>
+                            <th>Status</th>
+                            <th>Current Tenant</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for unit in units %}
+                        <tr>
+                            <td><strong>{{ unit.unit_number }}</strong></td>
+                            <td>
+                                <a href="{% url 'property_detail' unit.property.pk %}">{{ unit.property.name }}</a>
+                            </td>
+                            <td>{{ unit.get_unit_type_display }}</td>
+                            <td>{{ unit.floor|default:"-" }}</td>
+                            <td>{{ unit.rent_amount|floatformat:0 }}</td>
+                            <td>
+                                {% if unit.is_occupied %}
+                                    <span class="badge bg-success">Occupied</span>
+                                {% elif unit.status == 'available' %}
+                                    <span class="badge bg-warning">Vacant</span>
+                                {% elif unit.status == 'maintenance' %}
+                                    <span class="badge bg-info">Maintenance</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">{{ unit.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% with current_tenant=unit.tenants.first %}
+                                    {% if current_tenant %}
+                                        <a href="{% url 'tenant_detail' current_tenant.pk %}">
+                                            {{ current_tenant.first_name }} {{ current_tenant.last_name }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'unit_update' unit.pk %}" class="btn btn-sm btn-outline-primary">
+                                        Edit
+                                    </a>
+                                    <a href="{% url 'unit_delete' unit.pk %}" class="btn btn-sm btn-outline-danger">
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-door-open"></i>
+                    <h5>No Units Found</h5>
+                    <p class="text-muted">
+                        {% if property_filter or status_filter %}
+                            No units match your filter criteria. Try adjusting your filters.
+                        {% else %}
+                            Get started by adding your first unit.
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'unit_create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add Unit
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

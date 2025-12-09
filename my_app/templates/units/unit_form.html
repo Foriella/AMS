@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if is_edit %}Edit{% else %}Add{% endif %} Unit | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'style/main.css' %}" rel="stylesheet">
+    <style>
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'manager_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'unit_list' %}">
+                        <i class="bi bi-arrow-left"></i> Back to Units
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1><i class="bi bi-door-open me-2"></i>{% if is_edit %}Edit{% else %}Add New{% endif %} Unit</h1>
+        </div>
+    </div>
+
+    <div class="container-main">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="form-container">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+                    <form method="POST" action="">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Property *</label>
+                                <select name="property" class="form-select" required>
+                                    <option value="">Select Property</option>
+                                    {% for property in form.property.field.queryset %}
+                                    <option value="{{ property.pk }}" {% if form.property.value == property.pk %}selected{% endif %}>{{ property.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Unit Number *</label>
+                                <input type="text" name="unit_number" class="form-control" value="{{ form.unit_number.value|default:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Unit Type *</label>
+                                <select name="unit_type" class="form-select" required>
+                                    <option value="">Select Type</option>
+                                    <option value="studio" {% if form.unit_type.value == 'studio' %}selected{% endif %}>Studio</option>
+                                    <option value="1br" {% if form.unit_type.value == '1br' %}selected{% endif %}>1 Bedroom</option>
+                                    <option value="2br" {% if form.unit_type.value == '2br' %}selected{% endif %}>2 Bedroom</option>
+                                    <option value="3br" {% if form.unit_type.value == '3br' %}selected{% endif %}>3 Bedroom</option>
+                                    <option value="4br" {% if form.unit_type.value == '4br' %}selected{% endif %}>4 Bedroom</option>
+                                    <option value="penthouse" {% if form.unit_type.value == 'penthouse' %}selected{% endif %}>Penthouse</option>
+                                    <option value="commercial" {% if form.unit_type.value == 'commercial' %}selected{% endif %}>Commercial Space</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Floor</label>
+                                <input type="text" name="floor" class="form-control" value="{{ form.floor.value|default:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Bedrooms</label>
+                                <input type="number" name="bedrooms" class="form-control" value="{{ form.bedrooms.value|default:'1' }}" min="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Bathrooms</label>
+                                <input type="number" name="bathrooms" class="form-control" value="{{ form.bathrooms.value|default:'1' }}" min="0">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Rent Amount (KES) *</label>
+                                <input type="number" name="rent_amount" class="form-control" value="{{ form.rent_amount.value|default:'' }}" step="0.01" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Deposit Amount (KES)</label>
+                                <input type="number" name="deposit_amount" class="form-control" value="{{ form.deposit_amount.value|default:'' }}" step="0.01">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Status *</label>
+                            <select name="status" class="form-select" required>
+                                <option value="available" {% if form.status.value == 'available' %}selected{% endif %}>Available</option>
+                                <option value="occupied" {% if form.status.value == 'occupied' %}selected{% endif %}>Occupied</option>
+                                <option value="maintenance" {% if form.status.value == 'maintenance' %}selected{% endif %}>Under Maintenance</option>
+                                <option value="reserved" {% if form.status.value == 'reserved' %}selected{% endif %}>Reserved</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" rows="3">{{ form.description.value|default:'' }}</textarea>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-lg"></i> {% if is_edit %}Update{% else %}Create{% endif %} Unit
+                            </button>
+                            <a href="{% url 'unit_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

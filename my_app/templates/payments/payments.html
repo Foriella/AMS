@@ -1,0 +1,298 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'style/main.css' %}" rel="stylesheet">
+</head>
+<body>
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'manager_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'manager_dashboard' %}">
+                            <i class="bi bi-grid-1x2"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'property_list' %}">
+                            <i class="bi bi-buildings"></i> Properties
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'unit_list' %}">
+                            <i class="bi bi-door-open"></i> Units
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'tenant_list' %}">
+                            <i class="bi bi-people"></i> Tenants
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-cash-stack"></i> Finance
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'payment_list' %}"><i class="bi bi-cash-stack me-2"></i>Payments</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link user-dropdown dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <div class="user-avatar">
+                                {% if user.is_authenticated %}
+                                    {{ user.username|slice:":2"|upper }}
+                                {% else %}
+                                    JD
+                                {% endif %}
+                            </div>
+                            <span class="d-none d-lg-inline">
+                                {% if user.is_authenticated %}
+                                    {{ user.get_full_name|default:user.username }}
+                                {% else %}
+                                    Guest
+                                {% endif %}
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-left me-2"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1><i class="bi bi-cash-stack me-2"></i>Payments</h1>
+        </div>
+    </div>
+        
+    <div class="container-main">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="stat-card card-green">
+                    <i class="bi bi-check-circle" style="font-size: 1.5rem;"></i>
+                    <h3>KES {{ total_collected|floatformat:0|default:0 }}</h3>
+                    <p>Total Collected</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card card-blue">
+                    <i class="bi bi-receipt" style="font-size: 1.5rem;"></i>
+                    <h3>{{ total_payments|default:0 }}</h3>
+                    <p>Total Payments</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="stat-card card-yellow">
+                    <i class="bi bi-hourglass-split" style="font-size: 1.5rem;"></i>
+                    <h3>{{ pending_payments|default:0 }}</h3>
+                    <p>Pending Payments</p>
+                </div>
+            </div>
+        </div>
+        <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="list-tab" data-bs-toggle="tab" data-bs-target="#list" type="button" role="tab">
+                    <i class="bi bi-list-ul me-1"></i> All Payments ({{ payments|length }})
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="add-tab" data-bs-toggle="tab" data-bs-target="#add" type="button" role="tab">
+                    <i class="bi bi-plus-circle me-1"></i> Record Payment
+                </button>
+            </li>
+        </ul>
+        <div class="tab-content" id="paymentTabsContent">
+            <div class="tab-pane fade show active" id="list" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <div class="btn-group">
+                        <a href="{% url 'payment_list' %}" class="btn btn-outline-secondary {% if not status_filter %}active{% endif %}">All</a>
+                        <a href="?status=completed" class="btn btn-outline-secondary {% if status_filter == 'completed' %}active{% endif %}">Completed</a>
+                        <a href="?status=pending" class="btn btn-outline-secondary {% if status_filter == 'pending' %}active{% endif %}">Pending</a>
+                        <a href="?status=failed" class="btn btn-outline-secondary {% if status_filter == 'failed' %}active{% endif %}">Failed</a>
+                    </div>
+                    <button class="btn btn-primary" onclick="document.getElementById('add-tab').click()">
+                        <i class="bi bi-plus-circle"></i> Record Payment
+                    </button>
+                </div>
+                <div class="table-container">
+                    {% if payments %}
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Tenant</th>
+                                    <th>Amount (KES)</th>
+                                    <th>Type</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr>
+                                    <td>
+                                        <a href="{% url 'tenant_detail' payment.tenant.pk %}">
+                                            {{ payment.tenant.first_name }} {{ payment.tenant.last_name }}
+                                        </a>
+                                    </td>
+                                    <td><strong>{{ payment.amount|floatformat:0 }}</strong></td>
+                                    <td>{{ payment.get_payment_type_display }}</td>
+                                    <td>
+                                        {% if payment.payment_method == 'mpesa' %}
+                                            <span class="badge bg-mpesa">M-Pesa</span>
+                                        {% elif payment.payment_method == 'cash' %}
+                                            <span class="badge bg-cash">Cash</span>
+                                        {% elif payment.payment_method == 'bank' %}
+                                            <span class="badge bg-bank">Bank Transfer</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ payment.get_payment_method_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if payment.status == 'completed' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif payment.status == 'pending' %}
+                                            <span class="badge bg-warning text-dark">Pending</span>
+                                        {% elif payment.status == 'failed' %}
+                                            <span class="badge bg-danger">Failed</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ payment.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ payment.payment_date|date:"M d, Y" }}</td>
+                                    <td>
+                                        <a href="{% url 'payment_detail' payment.pk %}" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'payment_update' payment.pk %}" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="bi bi-cash-stack"></i>
+                            <h5>No Payments Found</h5>
+                            <p class="text-muted">
+                                {% if status_filter %}
+                                    No payments match your filter criteria. Try adjusting your filters.
+                                {% else %}
+                                    Get started by recording your first payment.
+                                {% endif %}
+                            </p>
+                            <button class="btn btn-primary" onclick="document.getElementById('add-tab').click()">
+                                <i class="bi bi-plus-circle"></i> Record Payment
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="tab-pane fade" id="add" role="tabpanel">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="form-container">
+                            <h5 class="mb-4"><i class="bi bi-plus-circle text-primary me-2"></i>Record New Payment</h5>
+                            <form method="post" action="{% url 'payment_create' %}">
+                                {% csrf_token %}
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Tenant *</label>
+                                    {{ form.tenant }}
+                                    {% if form.tenant.errors %}
+                                        <div class="text-danger small">{{ form.tenant.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Amount (KES) *</label>
+                                        {{ form.amount }}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Payment Type *</label>
+                                        {{ form.payment_type }}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Payment Method *</label>
+                                        {{ form.payment_method }}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Payment Date *</label>
+                                        {{ form.payment_date }}
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Status</label>
+                                        {{ form.status }}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Reference Number</label>
+                                        {{ form.reference_number }}
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label">Description</label>
+                                    {{ form.description }}
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-check-lg"></i> Save Payment
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('list-tab').click()">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

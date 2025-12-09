@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard | Foriella AMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{% static 'style/dashboard.css' %}" rel="stylesheet">
+</head>
+<body class="tenant-dashboard">
+    <nav class="top-navbar navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'tenant_dashboard' %}">
+                <div class="logo-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+                <h4>Foriella <span>AMS</span></h4>
+            </a>
+            
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link user-dropdown dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                        <div class="user-avatar">
+                            {{ tenant.first_name|slice:":1"|upper }}{{ tenant.last_name|slice:":1"|upper }}
+                        </div>
+                        <span class="d-none d-lg-inline">{{ tenant.full_name }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="bi bi-box-arrow-left me-2"></i>Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="page-header">
+        <div class="container-fluid">
+            <h1>Welcome, {{ tenant.first_name }}</h1>
+        </div>
+    </div>
+    
+    <div class="container-main">
+        <div class="d-flex justify-content-end mb-3">
+            <a href="{% url 'mpesa_payment' tenant.pk %}" class="btn btn-success btn-lg">
+                <i class="bi bi-phone"></i> Pay Now (M-Pesa)
+            </a>
+        </div>
+        {% if pending_amount > 0 %}
+        <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-3" style="font-size: 1.5rem;"></i>
+            <div class="flex-grow-1">
+                <strong>Outstanding Balance</strong><br>
+                You have <strong>KES {{ pending_amount|floatformat:0 }}</strong> in pending payments.
+            </div>
+        </div>
+        {% endif %}
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="stat-card tenant-stat monthly-rent">
+                    <div class="stat-icon">
+                        <i class="bi bi-cash-coin"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>KES {{ tenant.rent_amount|floatformat:0|default:"0" }}</h3>
+                        <p>Monthly Rent</p>
+                    </div>
+                    <div class="stat-decoration"></div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card tenant-stat {% if pending_amount > 0 %}arrears{% else %}no-arrears{% endif %}">
+                    <div class="stat-icon">
+                        <i class="bi bi-{% if pending_amount > 0 %}exclamation-circle{% else %}check-circle{% endif %}"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>KES {{ pending_amount|floatformat:0 }}</h3>
+                        <p>{% if pending_amount > 0 %}Total Arrears{% else %}No Arrears{% endif %}</p>
+                    </div>
+                    <div class="stat-decoration"></div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card tenant-stat active-lease">
+                    <div class="stat-icon">
+                        <i class="bi bi-house-door"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{% if tenant.unit %}{{ tenant.unit.unit_number }}{% else %}--{% endif %}</h3>
+                        <p>My Unit</p>
+                    </div>
+                    <div class="stat-decoration"></div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="stat-card tenant-stat total-paid">
+                    <div class="stat-icon">
+                        <i class="bi bi-wallet2"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>KES {{ total_paid|floatformat:0 }}</h3>
+                        <p>Total Paid</p>
+                    </div>
+                    <div class="stat-decoration"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card border-0 shadow-sm h-100 unit-card">
+                    <div class="card-header unit-card-header">
+                        <h6 class="mb-0"><i class="bi bi-house-door me-2"></i> My Unit</h6>
+                    </div>
+                    <div class="card-body">
+                        {% if tenant.unit %}
+                        <div class="unit-info-box">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h5 class="mb-1 text-primary">{{ tenant.unit.property.name }}</h5>
+                                    <p class="text-muted mb-2">
+                                        <i class="bi bi-door-open"></i> Unit {{ tenant.unit.unit_number }}
+                                        <span class="badge bg-primary ms-2">{{ tenant.unit.get_unit_type_display }}</span>
+                                    </p>
+                                </div>
+                                <span class="badge bg-{% if tenant.status == 'active' %}success{% else %}warning{% endif %} status-badge">{{ tenant.get_status_display }}</span>
+                            </div>
+                            <hr>
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <small class="text-muted">Monthly Rent</small>
+                                    <h6 class="mb-0 text-success">KES {{ tenant.rent_amount|floatformat:0|default:"--" }}</h6>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Lease Start</small>
+                                    <h6 class="mb-0">{{ tenant.lease_start_date|date:"M Y"|default:"--" }}</h6>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted">Lease End</small>
+                                    <h6 class="mb-0">{{ tenant.lease_end_date|date:"M Y"|default:"--" }}</h6>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-house-door" style="font-size: 3rem;"></i>
+                            <p class="mt-2">No unit assigned yet.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-4">
+                <div class="card border-0 shadow-sm h-100 lease-card">
+                    <div class="card-header lease-card-header">
+                        <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i> Lease Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush lease-info-list">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Tenant Name</span>
+                                <strong>{{ tenant.full_name }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Email</span>
+                                <strong>{{ tenant.email }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Phone</span>
+                                <strong>{{ tenant.phone }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Monthly Rent</span>
+                                <strong class="text-primary">KES {{ tenant.rent_amount|floatformat:0|default:"0" }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Deposit Paid</span>
+                                <strong>KES {{ tenant.deposit_paid|floatformat:0|default:"0" }}</strong>
+                            </li>
+                            {% if days_until_lease_end is not None %}
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>Lease Expires In</span>
+                                <strong class="{% if days_until_lease_end < 30 %}text-danger{% endif %}">
+                                    {% if days_until_lease_end < 0 %}Expired{% else %}{{ days_until_lease_end }} days{% endif %}
+                                </strong>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card border-0 shadow-sm payment-history-card">
+                    <div class="card-header payment-history-header">
+                        <h6 class="mb-0"><i class="bi bi-clock-history me-2"></i> Payment History</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Type</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Reference</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for payment in payments %}
+                                <tr>
+                                    <td>{{ payment.payment_date|date:"M d, Y" }}</td>
+                                    <td>{{ payment.get_payment_type_display }}</td>
+                                    <td><strong>KES {{ payment.amount|floatformat:0 }}</strong></td>
+                                    <td>{{ payment.get_payment_method_display }}</td>
+                                    <td>{{ payment.reference_number|default:"-" }}</td>
+                                    <td>
+                                        {% if payment.status == 'completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                        {% elif payment.status == 'pending' %}
+                                        <span class="badge bg-warning">Pending</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary">{{ payment.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">No payment history yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
